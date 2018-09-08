@@ -32,6 +32,8 @@ IMAGE_SUBTYPES = set(['ink', 'square'])
 
 DEBUG_BOXHIT = False
 
+index = 0
+
 def boxhit(item, box):
     (x0, y0, x1, y1) = box
     assert item.x0 <= item.x1 and item.y0 <= item.y1
@@ -92,7 +94,8 @@ class RectExtractor(TextConverter):
         render(ltpage)
 
 class Annotation:
-    def __init__(self, pageno, tagname, coords=None, rect=None, contents=None, colour=None):
+    def __init__(self, id, pageno, tagname, coords=None, rect=None, contents=None, colour=None):
+        self.id = id
         self.pageno = pageno
         self.tagname = tagname
         if contents == '':
@@ -147,8 +150,8 @@ class Annotation:
         return (min(x0, x1), max(y0, y1)) # assume left-to-right top-to-bottom text :)
 
 def getannots(pdfannots, pageno, fh):
+    global index
     annots = []
-    index = 0
     input1 = PdfFileReader(fh)
     output = PdfFileWriter()
     targetPage = input1.getPage(pageno)
@@ -199,7 +202,7 @@ def getannots(pdfannots, pageno, fh):
         if contents is not None:
             contents = str(contents, 'iso8859-15') #'utf-8'
             contents = contents.replace('\r\n', '\n').replace('\r', '\n')
-        a = Annotation(pageno, subtype.name.lower(), pa.get('QuadPoints'), pa.get('Rect'), contents, getcolour(colour))
+        a = Annotation(index, pageno, subtype.name.lower(), pa.get('QuadPoints'), pa.get('Rect'), contents, getcolour(colour))
         annots.append(a)
 
         index += 1
@@ -343,10 +346,12 @@ def parseAnnots(annots, outlines, mediaboxes):
     annotations = [a for a in annots if a.tagname in ANNOT_SUBTYPES_LOW]
 
     if annotations:
-        index = 0
+        count = 0
         for a in annotations:
-            arr.append({"index": index, "pageno": a.pageno + 1, "colour": a.colour, "text": fmttext(a), "tag": a.tagname, "rect": a.rect})
-            index += 1
+            print(a.id)
+            print(count)
+            count += 1
+            arr.append({"index": a.id, "pageno": a.pageno + 1, "colour": a.colour, "text": fmttext(a), "tag": a.tagname, "rect": a.rect})
 
     return arr
 
