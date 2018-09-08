@@ -395,19 +395,15 @@ def printannots(fh):
     # prettyprint(allannots, outlines, mediaboxes)
     return json.dumps(parseAnnots(allannots, outlines, mediaboxes))
 
-def main():
-    if len(sys.argv) != 2:
-        sys.stderr.write("Usage: %s FILE.PDF\n" % sys.argv[0])
-        sys.exit(1)
-
+def main(filename):
     try:
-        fh = open(sys.argv[1], 'rb')
+        fh = open(filename, 'rb')
     except OSError as e:
         sys.stderr.write("Error: %s\n" % e)
         sys.exit(1)
     else:
         with fh:
-            return print(printannots(fh))
+            return printannots(fh)	
 
 if __name__ == "__main__":
     main()
