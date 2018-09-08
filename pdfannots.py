@@ -13,6 +13,9 @@ from pdfminer.psparser import PSLiteralTable, PSLiteral
 import pdfminer.pdftypes as pdftypes
 import pdfminer.settings
 import json
+from pyPdf import PdfFileWriter, PdfFileReader
+from wand.image import Image
+
 
 pdfminer.settings.STRICT = False
 
@@ -25,6 +28,7 @@ SUBSTITUTIONS = {
 
 ANNOT_SUBTYPES = set(['Text', 'Highlight', 'Squiggly', 'StrikeOut', 'Underline', 'Ink', 'Square'])
 ANNOT_SUBTYPES_LOW = set(['text', 'highlight', 'ink', 'square'])
+IMAGE_SUBTYPES = set(['ink', 'square'])
 
 DEBUG_BOXHIT = False
 
@@ -142,22 +146,58 @@ class Annotation:
             return None
         return (min(x0, x1), max(y0, y1)) # assume left-to-right top-to-bottom text :)
 
-def getannots(pdfannots, pageno):
+def getannots(pdfannots, pageno, fh):
     annots = []
+    index = 0
+    input1 = PdfFileReader(fh)
+    output = PdfFileWriter()
+    targetPage = input1.getPage(pageno)
     for pa in pdfannots:
-        print(pa)
+        # print(pa)
         subtype = pa.get('Subtype')
         if subtype is not None and subtype.name not in ANNOT_SUBTYPES:
             continue
-        
+        print(subtype)
+        if (subtype.name == "Ink" or subtype.name == "Square"):
+            print("yes")
+            print(type(pa.get('Rect')))
+            coord = pa.get('Rect')
+            targetPage.cropBox.lowerLeft = (coord[0], coord[1])
+            targetPage.trimBox.lowerLeft = (coord[0], coord[1])
+            targetPage.cropBox.upperRight = (coord[2], coord[3])
+            targetPage.trimBox.upperRight = (coord[2], coord[3])
+            pdf_bytes = io.BytesIO()
+            output.addPage(targetPage)
+            output.write(pdf_bytes)
+            pdf_bytes.seek(0)
+            img = Image(file = pdf_bytes, resolution = 72)
+            img.convert("bmp")
+            img.save(filename = str(index) + ".bmp")
+
+
         colour = pa.get('C')
 
         contents = pa.get('Contents')
+
+        def getcolour(colour):
+            if (colour == [1.0, 0.90196, 0.0]):
+                return "pink"
+            elif (colour == [0.26667, 0.78431, 0.96078]):  
+                return "blue"
+            elif (colour == [0.92549, 0.0, 0.54902]):
+                return "yellow"
+            elif (colour == [0.90196, 0.10588, 0.10588]):
+                return "red"
+            else:
+                return "none"
+
         if contents is not None:
             contents = str(contents, 'iso8859-15') #'utf-8'
             contents = contents.replace('\r\n', '\n').replace('\r', '\n')
-        a = Annotation(pageno, subtype.name.lower(), pa.get('QuadPoints'), pa.get('Rect'), contents, colour)
+        a = Annotation(pageno, subtype.name.lower(), pa.get('QuadPoints'), pa.get('Rect'), contents, getcolour(colour))
         annots.append(a)
+
+        index += 1
 
     return annots
 
@@ -289,24 +329,14 @@ def parseAnnots(annots, outlines, mediaboxes):
         msg = ' '.join(args)
         print(tw.fill(msg) + "\n")
 
-    def getcolour(annot):
-        if (annot.colour == [1.0, 0.90196, 0.0]):
-            return "pink"
-        elif (annot.colour == [0.26667, 0.78431, 0.96078]):  
-            return "blue"
-        elif (annot.colour == [0.92549, 0.0, 0.54902]):
-            return "yellow"
-        elif (annot.colour == [0.90196, 0.10588, 0.10588]):
-            return "red"
-        else:
-            return "none"
+    
 
     annotations = [a for a in annots if a.tagname in ANNOT_SUBTYPES_LOW]
 
     if annotations:
         index = 0
         for a in annotations:
-            arr.append({"index": index, "pageno": a.pageno + 1, "colour": getcolour(a), "text": fmttext(a), "tag": a.tagname, "rect": a.rect})
+            arr.append({"index": index, "pageno": a.pageno + 1, "colour": a.colour, "text": fmttext(a), "tag": a.tagname, "rect": a.rect})
             index += 1
 
     return arr
@@ -357,26 +387,35 @@ def printannots(fh):
     mediaboxes = {}
     allannots = []
 
+    
+
     for (pageno, page) in enumerate(PDFPage.create_pages(doc)):
         pagesdict[page.pageid] = pageno
         mediaboxes[pageno] = page.mediabox
         if page.annots is None or page.annots == []:
             continue
 
+        print("-- break --")
+        
+        # page.trimBox.lowerLeft = (25, 25)
+        # page.trimBox.upperRight = (225, 225)
+        # output.addPage(page)
+
+        print("-- break --")
+
         # emit progress indicator
         sys.stderr.write((" " if pageno > 0 else "") + "%d" % (pageno + 1))
         sys.stderr.flush()
 
         pdfannots = []
-
         for a in pdftypes.resolve1(page.annots):
             if isinstance(a, pdftypes.PDFObjRef):
-                # print(a.resolve())
-                pdfannots.append(a.resolve())
+                resolved = a.resolve()
+                pdfannots.append(resolved)
             else:
                 sys.stderr.write('Warning: unknown annotation: %s\n' % a)
 
-        pageannots = getannots(pdfannots, pageno)
+        pageannots = getannots(pdfannots, pageno, fh)
         device.setcoords(pageannots)
         interpreter.process_page(page)
         allannots.extend(pageannots)
