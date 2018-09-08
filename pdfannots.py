@@ -24,6 +24,7 @@ SUBSTITUTIONS = {
 }
 
 ANNOT_SUBTYPES = set(['Text', 'Highlight', 'Squiggly', 'StrikeOut', 'Underline', 'Ink', 'Square'])
+ANNOT_SUBTYPES_LOW = set(['text', 'highlight', 'ink', 'square'])
 
 DEBUG_BOXHIT = False
 
@@ -288,13 +289,24 @@ def parseAnnots(annots, outlines, mediaboxes):
         msg = ' '.join(args)
         print(tw.fill(msg) + "\n")
 
-    nits = [a for a in annots if a.tagname in ['squiggly', 'strikeout', 'underline']]
-    highlights = [a for a in annots if a.tagname == 'highlight' and a.contents is None]
+    def getcolour(annot):
+        if (annot.colour == [1.0, 0.90196, 0.0]):
+            return "pink"
+        elif (annot.colour == [0.26667, 0.78431, 0.96078]):  
+            return "blue"
+        elif (annot.colour == [0.92549, 0.0, 0.54902]):
+            return "yellow"
+        elif (annot.colour == [0.90196, 0.10588, 0.10588]):
+            return "red"
+        else:
+            return "none"
 
-    if highlights:
+    annotations = [a for a in annots if a.tagname in ANNOT_SUBTYPES_LOW]
+
+    if annotations:
         index = 0
-        for a in highlights:
-            arr.append({"index": index, "pos": a.pageno + 1, "colour": a.colour, "text": fmttext(a), "tag": a.tagname, "rect": a.rect, "pageno": a.pageno})
+        for a in annotations:
+            arr.append({"index": index, "pageno": a.pageno + 1, "colour": getcolour(a), "text": fmttext(a), "tag": a.tagname, "rect": a.rect})
             index += 1
 
     return arr
@@ -395,7 +407,7 @@ def main():
         sys.exit(1)
     else:
         with fh:
-            return printannots(fh)
+            return print(printannots(fh))
 
 if __name__ == "__main__":
     main()
