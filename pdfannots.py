@@ -12,6 +12,7 @@ from pdfminer.pdfdocument import PDFDocument, PDFNoOutlines
 from pdfminer.psparser import PSLiteralTable, PSLiteral
 import pdfminer.pdftypes as pdftypes
 import pdfminer.settings
+import json
 
 pdfminer.settings.STRICT = False
 
@@ -22,7 +23,7 @@ SUBSTITUTIONS = {
     u'’': "'",
 }
 
-ANNOT_SUBTYPES = set(['Text', 'Highlight', 'Squiggly', 'StrikeOut', 'Underline'])
+ANNOT_SUBTYPES = set(['Text', 'Highlight', 'Squiggly', 'StrikeOut', 'Underline', 'Ink', 'Square'])
 
 DEBUG_BOXHIT = False
 
@@ -143,6 +144,7 @@ class Annotation:
 def getannots(pdfannots, pageno):
     annots = []
     for pa in pdfannots:
+        print(pa)
         subtype = pa.get('Subtype')
         if subtype is not None and subtype.name not in ANNOT_SUBTYPES:
             continue
@@ -257,6 +259,46 @@ def prettyprint(annots, outlines, mediaboxes):
             else:
                 printitem(fmtpos(a), "%s" % text)
 
+def parseAnnots(annots, outlines, mediaboxes):
+
+    arr = []
+    tw = textwrap.TextWrapper(width=80, initial_indent=" * ", subsequent_indent="   ")
+
+    def fmtpos(annot):
+        apos = annot.getstartpos()
+        if apos:
+            o = nearest_outline(outlines, annot.pageno, mediaboxes[annot.pageno], apos)
+        else:
+            o = None
+        if o:
+            return "Page %d (%s):" % (annot.pageno + 1, o.title)
+        else:
+            return "Page %d:" % (annot.pageno + 1)
+
+    def fmttext(annot):
+        if annot.boxes:
+            if annot.gettext():
+                return '"%s"' % annot.gettext()
+            else:
+                return "(XXX: missing text!)"
+        else:
+            return ''
+
+    def printitem(*args):
+        msg = ' '.join(args)
+        print(tw.fill(msg) + "\n")
+
+    nits = [a for a in annots if a.tagname in ['squiggly', 'strikeout', 'underline']]
+    highlights = [a for a in annots if a.tagname == 'highlight' and a.contents is None]
+
+    if highlights:
+        index = 0
+        for a in highlights:
+            arr.append({"index": index, "pos": a.pageno + 1, "colour": a.colour, "text": fmttext(a), "tag": a.tagname, "rect": a.rect, "pageno": a.pageno})
+            index += 1
+
+    return arr
+
 def resolve_dest(doc, dest):
     if isinstance(dest, bytes):
         dest = pdftypes.resolve1(doc.get_dest(dest))
@@ -314,9 +356,10 @@ def printannots(fh):
         sys.stderr.flush()
 
         pdfannots = []
+
         for a in pdftypes.resolve1(page.annots):
             if isinstance(a, pdftypes.PDFObjRef):
-                print(a.resolve())
+                # print(a.resolve())
                 pdfannots.append(a.resolve())
             else:
                 sys.stderr.write('Warning: unknown annotation: %s\n' % a)
@@ -325,7 +368,6 @@ def printannots(fh):
         device.setcoords(pageannots)
         interpreter.process_page(page)
         allannots.extend(pageannots)
-
     sys.stderr.write("\n")
 
     outlines = []
@@ -338,7 +380,8 @@ def printannots(fh):
         sys.stderr.write("Warning: failed to retrieve outlines: %s\n" % e)
 
     device.close()
-    prettyprint(allannots, outlines, mediaboxes)
+    # prettyprint(allannots, outlines, mediaboxes)
+    return json.dumps(parseAnnots(allannots, outlines, mediaboxes))
 
 def main():
     if len(sys.argv) != 2:
@@ -352,7 +395,7 @@ def main():
         sys.exit(1)
     else:
         with fh:
-            printannots(fh)
+            return printannots(fh)
 
 if __name__ == "__main__":
     main()
