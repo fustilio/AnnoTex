@@ -259,7 +259,9 @@ def prettyprint(annots, outlines, mediaboxes):
     def fmttext(annot):
         if annot.boxes:
             if annot.gettext():
-                return '"%s"' % annot.gettext()
+                text = '"%s"' % annot.gettext()
+                text = text.encode("utf-8")
+                return text
             else:
                 return "(XXX: missing text!)"
         else:
@@ -426,7 +428,7 @@ def printannots(fh):
         sys.stderr.write("Warning: failed to retrieve outlines: %s\n" % e)
 
     device.close()
-    # prettyprint(allannots, outlines, mediaboxes)
+    prettyprint(allannots, outlines, mediaboxes)
     return json.dumps(parseAnnots(allannots, outlines, mediaboxes))
 
 def main(filename):
