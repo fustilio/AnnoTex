@@ -189,11 +189,11 @@ def getannots(pdfannots, pageno, fh):
 
         def getcolour(colour):
             if (colour == [1.0, 0.90196, 0.0]):
-                return "pink"
+                return "yellow"
             elif (colour == [0.26667, 0.78431, 0.96078]):  
                 return "blue"
             elif (colour == [0.92549, 0.0, 0.54902]):
-                return "yellow"
+                return "pink"
             elif (colour == [0.90196, 0.10588, 0.10588]):
                 return "red"
             else:
