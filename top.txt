@@ -3,7 +3,7 @@
 \usepackage[landscape,left=1cm, right=1cm, top=1cm]{geometry}
 \usepackage{multicol}
 
-\graphicspath{ {./tempfolder/} }
+\graphicspath{ {./images/} }
 \begin{document}
 	\setlength{\columnseprule}{0.4pt}
 	\begin{multicols*}{4}

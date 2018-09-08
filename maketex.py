@@ -8,16 +8,25 @@ CONST_NEWLINE = "\n"
 CONST_FILENAME = "./out/tempLatex.tex"
 
 def addSubTitle(filef, titleStr):
-    filef.write("\\underline{\\begin{large}\\textbf{"+ CONST_NEWLINE)
-    filef.write(titleStr + CONST_NEWLINE)
-    filef.write("}\\end{large}}" + CONST_NEWLINE + "\\newline" + CONST_NEWLINE)
+    filef.write("\\medskip" + CONST_NEWLINE)
+    filef.write("\\begin{large}\\textbf{"+ CONST_NEWLINE)
+    filef.write(""+ titleStr + CONST_NEWLINE)
+    filef.write("}\\end{large}" + CONST_NEWLINE + "\\medskip" + CONST_NEWLINE)
 
 def addTitle(filef, titleStr):
-     filef.write(CONST_NEWLINE+ "\\section{" + titleStr + "}" +CONST_NEWLINE )
+    filef.write("\\medskip" + CONST_NEWLINE)
+    filef.write(CONST_NEWLINE+ "\\section{" + titleStr + "}" +CONST_NEWLINE )
+    filef.write("\\medskip" + CONST_NEWLINE)
 
 def addContent(filef, descriptionStr):
+    filef.write("\\medskip" + CONST_NEWLINE)
     filef.write("$\\bullet$ " + descriptionStr + CONST_NEWLINE)
-    filef.write("\\newline" + CONST_NEWLINE)
+    filef.write("\\medskip" + CONST_NEWLINE)
+
+def addImage(filef, imageName):
+    filef.write("\\medskip" + CONST_NEWLINE)
+    filef.write("\\includegraphics[width=\\linewidth]{"+ str(imageName) + "}"  + CONST_NEWLINE)
+    filef.write("\\medskip" + CONST_NEWLINE)
 
 def convertLatexToPDF():
     os.system('pdflatex -output-directory ./public/out ' + CONST_FILENAME)
@@ -49,7 +58,7 @@ def createLatexPDF(datas):
         lines = [l for l in lines]
         filef.writelines(lines)
 
-
+    #print(datas)
     for data in datas:
         if(data["tag"] == "highlight"):
             if(data["colour"] == "yellow"):
@@ -58,6 +67,9 @@ def createLatexPDF(datas):
                 addTitle(filef, data["text"])
             elif(data["colour"] == "pink"):
                 addSubTitle(filef, data["text"])
+        else:
+           addImage(filef, data["index"])
+
 
 
 
