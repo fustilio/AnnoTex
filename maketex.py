@@ -4,7 +4,7 @@ import subprocess
 import json
 
 CONST_NEWLINE = "\n"
-CONST_FILENAME = "tempLatex.tex"
+CONST_FILENAME = "./out/tempLatex.tex"
 
 def addSubTitle(filef, titleStr):
     filef.write("\\underline{\\begin{large}\\textbf{"+ CONST_NEWLINE)
@@ -19,7 +19,8 @@ def addContent(filef, descriptionStr):
     filef.write("\\newline" + CONST_NEWLINE)
 
 def convertLatexToPDF():
-    subprocess.call('pdflatex ' + CONST_FILENAME)
+    os.system('pdflatex -output-directory ./out ' + CONST_FILENAME)
+    #os.system('mv tempLatex.pdf out/output.pdf')
 
 def removeImageFolder():
     try:
