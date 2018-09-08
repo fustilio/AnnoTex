@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+import glob
 import json
 
 CONST_NEWLINE = "\n"
@@ -19,7 +20,7 @@ def addContent(filef, descriptionStr):
     filef.write("\\newline" + CONST_NEWLINE)
 
 def convertLatexToPDF():
-    os.system('pdflatex -output-directory ./out ' + CONST_FILENAME)
+    os.system('pdflatex -output-directory ./public/out ' + CONST_FILENAME)
     #os.system('mv tempLatex.pdf out/output.pdf')
 
 def removeImageFolder():
@@ -29,7 +30,13 @@ def removeImageFolder():
         print ("Error: %s - %s." % (e.filename, e.strerror))
 
 
-def createLatexPDF(datas): 
+def createLatexPDF(datas):
+    old_files = glob.glob('./out/*')
+    for f in old_files:
+        os.remove(f)
+    old_files = glob.glob('./public/out/*')
+    for f in old_files:
+        os.remove(f)
     imagePath = "./tempfolder/"
 
     if os.path.exists(CONST_FILENAME):
