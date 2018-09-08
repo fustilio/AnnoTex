@@ -1,6 +1,7 @@
 import sys
 import json
 import pdfannots
+import maketex
 
 if len(sys.argv) > 1:
 	filename = sys.argv[1]
@@ -12,6 +13,6 @@ data = json.loads(pdfannots.main(filename))
 #json_string = raw_input()
 #data = json.loads(json_string)
 #print(data[0])
-
+maketex.createLatexPDF(data)
 
 # Send json to Wayne to generate tex
