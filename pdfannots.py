@@ -23,6 +23,7 @@ SUBSTITUTIONS = {
     u'ﬁ': 'fi',
     u'ﬂ': 'fl',
     u'’': "'",
+    u'\u2013': "-"
 }
 
 ANNOT_SUBTYPES = set(['Text', 'Highlight', 'Squiggly', 'StrikeOut', 'Underline', 'Ink', 'Square'])
@@ -172,11 +173,11 @@ def getannots(pdfannots, pageno, fh):
             output.addPage(targetPage)
             output.write(pdf_bytes)
             pdf_bytes.seek(0)
-            img = Image(file = pdf_bytes, resolution = 72)
-            img.convert("bmp")
+            img = Image(file = pdf_bytes, resolution = 300)
+            img.convert("png")
             if not os.path.exists(newpath):
                 os.makedirs(newpath)
-            img.save(filename = newpath + str(index) + ".bmp")
+            img.save(filename = newpath + str(index) + ".png")
 
 
         colour = pa.get('C')
@@ -391,21 +392,11 @@ def printannots(fh):
     mediaboxes = {}
     allannots = []
 
-    
-
     for (pageno, page) in enumerate(PDFPage.create_pages(doc)):
         pagesdict[page.pageid] = pageno
         mediaboxes[pageno] = page.mediabox
         if page.annots is None or page.annots == []:
             continue
-
-        print("-- break --")
-        
-        # page.trimBox.lowerLeft = (25, 25)
-        # page.trimBox.upperRight = (225, 225)
-        # output.addPage(page)
-
-        print("-- break --")
 
         # emit progress indicator
         sys.stderr.write((" " if pageno > 0 else "") + "%d" % (pageno + 1))
@@ -449,4 +440,4 @@ def main(filename):
             return printannots(fh)	
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])
