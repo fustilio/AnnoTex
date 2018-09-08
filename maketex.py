@@ -3,30 +3,53 @@ import shutil
 import subprocess
 import glob
 import json
+import re
 
 CONST_NEWLINE = "\n"
 CONST_FILENAME = "./out/tempLatex.tex"
 
+def escapeSymbols(str):
+    conv = {
+        '&': r'\&',
+        '%': r'\%',
+        '$': r'\$',
+        '#': r'\#',
+        '_': r'\_',
+        '{': r'\{',
+        '}': r'\}',
+        '~': r'\textasciitilde{}',
+        '^': r'\^{}',
+        '\\': r'\textbackslash{}',
+        '<': r'\textless{}',
+        '>': r'\textgreater{}',
+    }
+    regex = re.compile('|'.join(re.escape(unicode(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
+    return regex.sub(lambda match: conv[match.group()], str)
+
 def addSubTitle(filef, titleStr):
+    titleStr = escapeSymbols(titleStr)
     filef.write("\\medskip" + CONST_NEWLINE)
     filef.write("\\begin{large}\\textbf{"+ CONST_NEWLINE)
-    filef.write(""+ titleStr + CONST_NEWLINE)
+    filef.write(""+ titleStr.encode('utf-8')+ CONST_NEWLINE)
     filef.write("}\\end{large}" + CONST_NEWLINE + "\\medskip" + CONST_NEWLINE)
 
 def addTitle(filef, titleStr):
+    titleStr = escapeSymbols(titleStr)
     filef.write("\\medskip" + CONST_NEWLINE)
-    filef.write(CONST_NEWLINE+ "\\section{" + titleStr + "}" +CONST_NEWLINE )
+    filef.write(CONST_NEWLINE+ "\\section{" + titleStr.encode('utf-8') + "}" +CONST_NEWLINE )
     filef.write("\\medskip" + CONST_NEWLINE)
 
 def addContent(filef, descriptionStr):
+    descriptionStr = escapeSymbols(descriptionStr)
     filef.write("\\medskip" + CONST_NEWLINE)
-    filef.write("$\\bullet$ " + descriptionStr + CONST_NEWLINE)
+    filef.write("$\\bullet$ " + descriptionStr.encode('utf-8') + CONST_NEWLINE)
     filef.write("\\medskip" + CONST_NEWLINE)
 
 def addImage(filef, imageName):
     filef.write("\\medskip" + CONST_NEWLINE)
     filef.write("\\includegraphics[width=\\linewidth]{"+ str(imageName) + "}"  + CONST_NEWLINE)
     filef.write("\\medskip" + CONST_NEWLINE)
+
 
 def convertLatexToPDF():
     os.system('pdflatex -output-directory ./public/out ' + CONST_FILENAME)
