@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import sys, io, textwrap
+import sys, io, textwrap, os, json
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfpage import PDFPage
 from pdfminer.layout import LAParams, LTContainer, LTAnno, LTText, LTTextBox
@@ -12,7 +12,6 @@ from pdfminer.pdfdocument import PDFDocument, PDFNoOutlines
 from pdfminer.psparser import PSLiteralTable, PSLiteral
 import pdfminer.pdftypes as pdftypes
 import pdfminer.settings
-import json
 from pyPdf import PdfFileWriter, PdfFileReader
 from wand.image import Image
 
@@ -152,6 +151,7 @@ def getannots(pdfannots, pageno, fh):
     input1 = PdfFileReader(fh)
     output = PdfFileWriter()
     targetPage = input1.getPage(pageno)
+    newpath = "./images/"
     for pa in pdfannots:
         # print(pa)
         subtype = pa.get('Subtype')
@@ -164,15 +164,19 @@ def getannots(pdfannots, pageno, fh):
             coord = pa.get('Rect')
             targetPage.cropBox.lowerLeft = (coord[0], coord[1])
             targetPage.trimBox.lowerLeft = (coord[0], coord[1])
+            targetPage.mediaBox.lowerLeft = (coord[0], coord[1])
             targetPage.cropBox.upperRight = (coord[2], coord[3])
             targetPage.trimBox.upperRight = (coord[2], coord[3])
+            targetPage.mediaBox.upperRight = (coord[2], coord[3])
             pdf_bytes = io.BytesIO()
             output.addPage(targetPage)
             output.write(pdf_bytes)
             pdf_bytes.seek(0)
             img = Image(file = pdf_bytes, resolution = 72)
             img.convert("bmp")
-            img.save(filename = str(index) + ".bmp")
+            if not os.path.exists(newpath):
+                os.makedirs(newpath)
+            img.save(filename = newpath + str(index) + ".bmp")
 
 
         colour = pa.get('C')
