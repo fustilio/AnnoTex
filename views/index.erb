@@ -18,6 +18,9 @@
     <link href="vendor/simple-line-icons/css/simple-line-icons.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato|Montserrat|Raleway" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+
 
     <!-- Custom styles for this template -->
     <link href="css/landing-page.css" rel="stylesheet">
@@ -25,39 +28,48 @@
   </head>
 
   <body>
-
-    <!-- Brand Header -->
-
-
     <!-- Masthead -->
-    <header class="masthead text-white text-center">
+    <header class="masthead text-white">
       <div class="overlay"></div>
       <div class="container">
-        <div class="row">
-          <div class="col-xl-7 mx-auto">
-            <h1 class="mb-5">Generate Cheatsheets from your PDF notes</h1>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-xl-2 mx-auto">
-            <form>
-              <div class="form-row">
-                  <button type="submit" class="btn btn-block btn-lg btn-primary">Get Started</button>
+        <div class="row subheader">
+          <div class="col-xl-7 col-xs-offset-1">
+            <div class="row">
+              <div class="col-3">
+                <img class="mb-4 img-fluid" src="img/brand-img.png">
               </div>
-            </form>
+            </div>
+            <div class="row">
+              <div class="col-xl-12 col-xs-offset-1">
+                <h1 class="mb-4 main-header">Generate Crib Sheets from PDF Files</h1>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-4 col-xs-offset-1">
+                <a class="btn btn-block btn-lg btn-primary ghost" href="#learn">Learn More</a>
+              </div>
+              <div class="col-xl-4">
+                <a class="btn btn-block btn-lg btn-primary" href="#start">Get Started</a>
+              </div>
+            </div>
+
           </div>
+          <div class="col-xl-5">
+            <img class="img-fluid" src="img/header-img.png">
+          </div>
+
         </div>
       </div>
     </header>
 
     <!-- Icons Grid -->
-    <section class="features-icons text-center">
-      <div class="container">
+    <section class="features-icons text-center vertical-center">
+      <div class="container" id="learn">
         <div class="row">
           <div class="col-lg-4">
             <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-2">
               <div class="features-icons-icon d-flex">
-                <i class="icon-screen-desktop m-auto text-primary"></i>
+                <i class="fas fa-highlighter m-auto"></i>
               </div>
               <h4>1. Annotate your notes</h4>
               <p class="lead mb-0">Annotate the important points in your PDF file by highlighting them with different colours.</p>
@@ -66,7 +78,7 @@
           <div class="col-lg-4">
             <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-2">
               <div class="features-icons-icon d-flex">
-                <i class="icon-layers m-auto text-primary"></i>
+                <i class="fas fa-file-upload m-auto"></i>
               </div>
               <h4>2. Upload to AnnoTex</h4>
               <p class="lead mb-0">Upload your annotated PDF files onto AnnoTex and wait for the magic to happen!</p>
@@ -75,10 +87,10 @@
           <div class="col-lg-4">
             <div class="features-icons-item mx-auto mb-0 mb-lg-2">
               <div class="features-icons-icon d-flex">
-                <i class="icon-check m-auto text-primary"></i>
+                <i class="fas fa-check-circle m-auto"></i>
               </div>
               <h4>3. Obtain Cheatsheet</h4>
-              <p class="lead mb-0">You will recieve a zip file consisting of the generated cheatsheet in PDF and Tex format.</p>
+              <p class="lead mb-0">After you have submitted your PDF file, AnnoTex will redirect you to your generated crib sheet.</p>
             </div>
           </div>
         </div>
@@ -86,17 +98,17 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="call-to-action text-white text-center">
+    <section class="call-to-action text-white text-center vertical-center">
       <div class="overlay"></div>
-      <div class="container">
+      <div class="container" id="start">
         <div class="row">
           <div class="col-xl-9 mx-auto">
-            <h2 class="mb-4">Ready to get started? Upload your notes now!</h2>
+            <h2 class="mb-4">Ready to get started? Upload your PDF files now!</h2>
           </div>
           <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
             <form action="/upload" method="post" enctype="multipart/form-data">
               <div class="form-row">
-                <div class="col-10">
+                <div class="col-10 browsefile mb-2">
                   <p class="file-return"></p>
                 </div>
                 <div class="col-2">
@@ -106,7 +118,7 @@
                   </div>
                 </div>
 
-                <div class="col-12">
+                <div class="col-12 mt-1">
                   <button type="submit" class="btn btn-block btn-lg btn-primary">Submit</button>
                 </div>
               </div>
@@ -144,17 +156,17 @@
             <ul class="list-inline mb-0">
               <li class="list-inline-item mr-3">
                 <a href="#">
-                  <i class="fa fa-facebook fa-2x fa-fw"></i>
+                  <i class="fab fa-facebook-f fa-2x fa-fw"></i>
                 </a>
               </li>
               <li class="list-inline-item mr-3">
                 <a href="#">
-                  <i class="fa fa-twitter fa-2x fa-fw"></i>
+                  <i class="fab fa-twitter fa-2x fa-fw"></i>
                 </a>
               </li>
               <li class="list-inline-item">
                 <a href="#">
-                  <i class="fa fa-instagram fa-2x fa-fw"></i>
+                  <i class="fab fa-instagram fa-2x fa-fw"></i>
                 </a>
               </li>
             </ul>

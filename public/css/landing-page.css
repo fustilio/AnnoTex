@@ -12,6 +12,12 @@ h6 {
   font-weight: 700;
 }
 
+.subheader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 header.masthead {
   position: relative;
   background-color: #5e3757;
@@ -19,9 +25,10 @@ header.masthead {
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-  padding-top: 8rem;
-  padding-bottom: 8rem;
   height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 header.masthead .overlay {
@@ -32,6 +39,10 @@ header.masthead .overlay {
   top: 0;
   left: 0;
   opacity: 0.3;
+}
+
+header.masthead .container {
+  width: 76%;
 }
 
 header.masthead h1 {
@@ -68,6 +79,7 @@ header.masthead h1 {
   padding-bottom: 7rem;
   background-color: #DA8F66;
   height: 90vh;
+  color: #1D1C36;
 }
 
 .features-icons .features-icons-item {
@@ -80,25 +92,12 @@ header.masthead h1 {
 
 .features-icons .features-icons-item .features-icons-icon i {
   font-size: 4.5rem;
-  color: white;
+  transition-duration: 0.2s;
+  color: #2D2441;
 }
 
 .features-icons .features-icons-item:hover .features-icons-icon i {
   font-size: 5rem;
-}
-
-.testimonials {
-  padding-top: 7rem;
-  padding-bottom: 7rem;
-}
-
-.testimonials .testimonial-item {
-  max-width: 18rem;
-}
-
-.testimonials .testimonial-item img {
-  max-width: 12rem;
-  box-shadow: 0px 5px 5px 0px #adb5bd;
 }
 
 .call-to-action {
@@ -122,6 +121,11 @@ header.masthead h1 {
   opacity: 0.3;
 }
 
+.vertical-center {
+  display: flex;
+  align-items: center;
+}
+
 .btn {
   background-color: #DA8F66;
   border-color: #DA8F66;
@@ -133,14 +137,18 @@ header.masthead h1 {
   border-color: #DA8F66;
 }
 
-a {
+footer a {
   color: #BB6968;
   -webkit-transition-duration: 0.1s; /* Safari */
   transition-duration: 0.1s; 
 }
 
-a:hover {
+footer a:hover {
   color: #fff;
+}
+
+a:hover {
+  text-decoration: none;
 }
 
 
@@ -148,15 +156,14 @@ input[type="file"] {
     display: none;
 }
 
-
-.file-return {
-  margin: 0;
+.browsefile {
+  border: 1px solid #DA8F66;
 }
+
 .file-return:not(:empty) {
-  margin: 1em 0;
+  margin: 0.5em 0 -0.5em 0;
 }
 .js .file-return {
-  content: "Choose file... ";
   font-style: italic;
   font-size: .9em;
   font-weight: bold;
@@ -170,11 +177,12 @@ input[type="file"] {
   width: 100%;
 }
 
-.custom-file-upload {
-    border: 1px solid #ccc;
-    display: inline-block;
-    padding: 6px 12px;
-    cursor: pointer;
+.ghost {
+  background-color: transparent;
+}
+
+.ghost:hover {
+  background-color: #DA8F66;
 }
 
 footer.footer {
