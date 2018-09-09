@@ -84,7 +84,7 @@ def createLatexPDF(datas):
     for data in datas:
         if(data["tag"] == "highlight"):
             text = data["text"][1:-1]
-            text = text.replace(text[0], text[0].upper())
+            text = text.replace(text[0], text[0].upper(), 1)
             if(data["colour"] == "yellow"):
                addContent(filef, text)
             elif(data["colour"] == "blue"):
