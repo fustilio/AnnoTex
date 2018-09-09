@@ -26,29 +26,28 @@ def escapeSymbols(str):
     regex = re.compile('|'.join(re.escape(unicode(key)) for key in sorted(conv.keys(), key = lambda item: - len(item))))
     return regex.sub(lambda match: conv[match.group()], str)
 
-def addSubTitle(filef, titleStr):
-    titleStr = escapeSymbols(titleStr)
-    filef.write("\\medskip" + CONST_NEWLINE)
-    filef.write("\\begin{large}\\textbf{"+ CONST_NEWLINE)
-    filef.write(""+ titleStr.encode('utf-8')+ CONST_NEWLINE)
-    filef.write("}\\end{large}" + CONST_NEWLINE + "\\medskip" + CONST_NEWLINE)
+
 
 def addTitle(filef, titleStr):
     titleStr = escapeSymbols(titleStr)
-    filef.write("\\medskip" + CONST_NEWLINE)
     filef.write(CONST_NEWLINE+ "\\section{" + titleStr.encode('utf-8') + "}" +CONST_NEWLINE )
-    filef.write("\\medskip" + CONST_NEWLINE)
+
+
+def addSubTitle(filef, titleStr):
+    titleStr = escapeSymbols(titleStr)
+    filef.write("\\begin{large}\\textbf{"+ CONST_NEWLINE)
+    filef.write(""+ titleStr.encode('utf-8')+ CONST_NEWLINE)
+    filef.write("}\\end{large}" + CONST_NEWLINE + "\\newline" + CONST_NEWLINE)
 
 def addContent(filef, descriptionStr):
     descriptionStr = escapeSymbols(descriptionStr)
-    filef.write("\\medskip" + CONST_NEWLINE)
     filef.write("$\\bullet$ " + descriptionStr.encode('utf-8') + CONST_NEWLINE)
-    filef.write("\\medskip" + CONST_NEWLINE)
+    filef.write("\\newline" + CONST_NEWLINE)
+
 
 def addImage(filef, imageName):
-    filef.write("\\medskip" + CONST_NEWLINE)
     filef.write("\\includegraphics[width=\\linewidth]{"+ str(imageName) + "}"  + CONST_NEWLINE)
-    filef.write("\\medskip" + CONST_NEWLINE)
+    filef.write("\\newline" + CONST_NEWLINE)
 
 
 def convertLatexToPDF():
@@ -84,14 +83,18 @@ def createLatexPDF(datas):
     #print(datas)
     for data in datas:
         if(data["tag"] == "highlight"):
+            text = data["text"][1:-1]
+            text = text.replace(text[0], text[0].upper())
             if(data["colour"] == "yellow"):
-                addContent(filef, data["text"])
+               addContent(filef, text)
             elif(data["colour"] == "blue"):
-                addTitle(filef, data["text"])
+                 addTitle(filef, text)
+                
             elif(data["colour"] == "pink"):
-                addSubTitle(filef, data["text"])
+                addSubTitle(filef, text)
         else:
            addImage(filef, data["index"])
+
 
 
 
